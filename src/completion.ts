@@ -24,9 +24,13 @@ export class Completion
                 for( let key in methods)
                 {
                     // console.log(methods[key]);
-                    let method = methods[key].match(/function\s+(\w+)\((\s?[\\]?\w+\s?\$\w+\s?[,]?)+?\)/);
-                    console.log(method);
-                    
+                    let method: RegExpMatchArray|null = methods[key].match(/function\s+(\w+)\((.*)\)/);
+                    let obj = {};
+                    if (method) 
+                    {
+                        obj[method[1].toString()] = method[2];
+                    }
+                    // console.log(method);
                 }
             }
         });
