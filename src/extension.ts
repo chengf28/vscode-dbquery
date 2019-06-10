@@ -1,17 +1,32 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import {completion}  from "./completion";
+import {Completion}  from "./completion";
+import { read } from 'fs';
 
 export function activate(context: vscode.ExtensionContext) {
 
 	console.log('My Dear Dalao please dai dai wo');
-	let documentSelector = { scheme: "file", language: "php" };
-	let disposable = vscode.languages.registerCompletionItemProvider(
-		documentSelector,
-		new completion
+	let res = vscode.workspace.workspaceFolders;
+	console.log(res);
+
+	vscode.workspace.findFiles('**/QueryBuilder.php').then(uri=>
+		{
+			Completion.init(uri);
+		}
 	);
-	context.subscriptions.push(disposable);
+	
+	
+	
+	// let t = new Completion;
+	// vscode.window.showInformationMessage('当前路径:'+t.getRoot());
+
+	// let documentSelector = { scheme: "file", language: "php" };
+	// let disposable = vscode.languages.registerCompletionItemProvider(
+	// 	documentSelector,
+	// 	new Completion
+	// );
+	// context.subscriptions.push(disposable);
 }
 
 // this method is called when your extension is deactivated

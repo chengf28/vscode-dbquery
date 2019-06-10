@@ -6,9 +6,19 @@ const vscode = require("vscode");
 const completion_1 = require("./completion");
 function activate(context) {
     console.log('My Dear Dalao please dai dai wo');
-    let documentSelector = { scheme: "file", language: "php" };
-    let disposable = vscode.languages.registerCompletionItemProvider(documentSelector, new completion_1.completion);
-    context.subscriptions.push(disposable);
+    let res = vscode.workspace.workspaceFolders;
+    console.log(res);
+    vscode.workspace.findFiles('**/QueryBuilder.php').then(uri => {
+        completion_1.Completion.init(uri);
+    });
+    // let t = new Completion;
+    // vscode.window.showInformationMessage('当前路径:'+t.getRoot());
+    // let documentSelector = { scheme: "file", language: "php" };
+    // let disposable = vscode.languages.registerCompletionItemProvider(
+    // 	documentSelector,
+    // 	new Completion
+    // );
+    // context.subscriptions.push(disposable);
 }
 exports.activate = activate;
 // this method is called when your extension is deactivated
