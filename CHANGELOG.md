@@ -1,9 +1,11 @@
 # Change Log
 
-All notable changes to the "vscode-for-ts" extension will be documented in this file.
+All notable changes to the "vscode-dbquery" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
-
+- release v1.0.0
 - Initial release
+
+## v1.0.0

@@ -2,19 +2,28 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import {Completion}  from "./completion";
-import { read } from 'fs';
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 
 	console.log('My Dear Dalao please dai dai wo');
-	let res = vscode.workspace.workspaceFolders;
-	console.log(res);
 
 	vscode.workspace.findFiles('**/QueryBuilder.php').then(uri=>
 		{
 			Completion.init(uri);
+			let provide = vscode.languages.registerCompletionItemProvider({
+				scheme:"file",
+				language:"php"
+			}, Completion.provideCompletionItems(),'>');
+			context.subscriptions.push(provide);
 		}
 	);
+	
+	// console.log(Completion.methods);
+	
+	
+
+	
+
 	
 	
 	
