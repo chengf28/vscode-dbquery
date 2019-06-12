@@ -1,8 +1,9 @@
 {
-	"name": "vscode-dbquery",
-	"displayName": "vscode-dbquery",
-	"description": "for my other php project",
+	"name": "dbquery",
+	"displayName": "PHP_DBquery",
+	"description": "This is a extientison for chengf28/dbquery Snippets",
 	"publisher": "chengf28",
+	"icon": "dbquery.png",
 	"version": "1.0.0",
 	"engines": {
 		"vscode": "^1.34.0"
@@ -10,18 +11,13 @@
 	"categories": [
 		"Snippets"
 	],
+	"keywords": [
+		"php"
+	],
 	"activationEvents": [
 		"onLanguage:php"
 	],
 	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
-			}
-		]
-	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
@@ -35,5 +31,9 @@
 		"tslint": "^5.12.1",
 		"@types/node": "^10.12.21",
 		"@types/mocha": "^2.2.42"
+	},
+	"repository": {
+		"url": "git@github.com:chengf28/vscode-dbquery.git",
+		"type": "git"
 	}
 }

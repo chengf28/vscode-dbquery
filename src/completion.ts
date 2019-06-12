@@ -1,6 +1,4 @@
-import * as Path from "path";
 import * as vscode from "vscode";
-import { readFile, close } from "fs";
 export class Completion 
 {
     static methods:{[key:string]:any} = {};
@@ -11,22 +9,47 @@ export class Completion
         for (const key in uris) 
         {
             await this.read(uris[key]);
+            vscode.window.showInformationMessage('DBquery插件加载完成');
+            console.log(this.methods);
+            
         }
     }
 
+    /**
+     * 读取文件内容,匹配出所有内容
+     * @param path 文件地址
+     */
     public static async read(path:vscode.Uri)
     {
         return vscode.workspace.openTextDocument(path).then(text=>{
-            let all: RegExpMatchArray|null  = text.getText().match(/public\s+?function\s+?\w+\(.*\)/g);
+            const all: RegExpMatchArray | null = text.getText().match(/(|\/\*\*[\t\n\r]+(\s+\*\s?(.*|\/))+[\t\n\r\s]+?)public\s+?function\s+?[^_]\w+\(.*\)/g);
             if (all) 
             {
-                for( let key in all )
+                for( const key in all )
                 {
+                    const context:string = all[key];
                     // console.log(methods[key]);
-                    let method: RegExpMatchArray | null = all[key].match(/function\s?(\w+)\((.*)\)/);
+                    const method: RegExpMatchArray | null = context.match(/function\s?(\w+)(\(.*\))/);
+                    
                     if (method)
                     {
-                        this.methods[method[1]] = method[2].match(/(\$\w+)([\s=]*(\w)+)?/g);
+                        this.methods[method[1]] = {
+                            "params":method[2],
+                        };
+                        
+                        const docReg: RegExp = /\s+\*\s?(\@.*)/g;
+                        const titleReg: RegExp = /\/\*\*\s+\*\s?(.*)/;
+
+                        const title: RegExpExecArray|null = titleReg.exec(context);
+                        this.methods[method[1]]['title'] = title && title[1] ? title[1]  : '';
+
+                        let doc:RegExpExecArray|null;
+                        this.methods[method[1]]['doc'] = [];
+                        while (doc = docReg.exec(context)) 
+                        {
+                            this.methods[method[1]]['doc'].push(doc[1]);
+                        }
+
                     }
                 }
             }
@@ -47,11 +70,29 @@ export class Completion
                 }
                 for (const method_name in methods)
                 {
-                    const Item: vscode.CompletionItem = new vscode.CompletionItem(method_name);
+                    const Item: vscode.CompletionItem = new vscode.CompletionItem(method_name, vscode.CompletionItemKind.Method);
                     Item.insertText = new vscode.SnippetString(
                         method_name + "($1)"
                     );
-                    Item.kind = vscode.CompletionItemKind.Method;
+                    // if (methods[method_name] !== null) 
+                    // {
+                    Item.detail = method_name + methods[method_name].params;
+
+                    Item.documentation = new vscode.MarkdownString(
+                            `
+${methods[method_name].title}
+\`\`\`php 
+<?php
+    public function $${Item.detail} {}
+\`\`\`
+${Completion.getDoc(method_name)}
+                        `
+                        );
+
+                    console.log(Item.documentation);
+                    
+                    // }
+                    
                     completions.push(
                         Item
                     );
@@ -59,5 +100,17 @@ export class Completion
                 return completions;
             }
         };
+    }
+
+
+    private static getDoc(method_name:string):string
+    {
+        let doc:string[] = this.methods[method_name].doc;
+        if (doc.length === 0 ) 
+        {
+            return '';
+        }
+        
+        return '* '+doc.join("\n* ");
     }
 }
